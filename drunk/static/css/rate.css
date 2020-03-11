@@ -1,0 +1,47 @@
+.body {
+    max-width: 1000px;
+}
+
+.card {
+    border: none;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #ff4e50;
+    border-color: #ff4e50;
+}
+
+.btn-danger:hover{
+    background-color: #BF3B3C;
+    border-color: #BF3B3C;
+}
+
+.rating-stars ul {
+    list-style-type:none;
+    padding:0;
+    float: left;
+    
+    -moz-user-select:none;
+    -webkit-user-select:none;
+  }
+
+  .rating-stars ul > li.star {
+    display:inline-block;
+    
+  }
+  
+  .rating-stars ul > li.star > i.fa {
+    font-size:2em; /* Change the size of the stars */
+    color:#ccc; /* Color on idle state */
+  }
+  
+  .rating-stars ul > li.star.hover > i.fa {
+    color:#f9d423;
+  }
+  
+  .rating-stars ul > li.star.selected > i.fa {
+    color:#ff4e50;
+  }
+  
+  

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filters %}
+{% load crispy_forms_tags %}
+{% load i18n widget_tweaks %}
+
+{% block head %} 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+ 
+{% block content %}
+
+    <h3> 
+    
+        {% if user.is_authenticated %}
+
+            <a href="{% url 'add-cocktail' %}" style="float: right; margin-right: 5px;" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Cocktail</a>      
+                    
+        {% endif %}
+        
+    
+    {% if cocktails %}
+        Cocktail List </h3>
+        </h3>
+        <br>
+        <input class="form-control" id="search" type="text" placeholder="Search with more than 2 letters." aria-label="Search"><br>
+
+        <div class="row row-cols-1 row-cols-md-3" id="cocktails">
+        
+            {% for cocktail in cocktails %}
+
+                <div class="col mb-4">
+                    <div class="card">
+                        <img src="{{ cocktail.picture.url }}" class="card-img-top" style="width: 290px; height: 290px;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{cocktail.name}} / <small>{{cocktail.group}}</small></h5>
+                            <p class="card-text">{{cocktail.recipe}}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <small class="text-muted">Is Alcoholic: 
+                                    {% if cocktail.is_alcoholoic %}
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                    {% else %}
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    {% endif %}
+                                </small>
+                            </li>
+                            <li class="list-group-item">
+                                <small class="text-muted">Taste: 
+                                    <span style="float: right;">
+                                        {% for i in cocktail.avg_taste|times %}
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                        {% endfor %}
+                                        {% for i in cocktail.avg_taste|fivemtimes %}
+                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                        {% endfor %}
+                                    </span>
+                                </small>
+                            </li>
+                            <li class="list-group-item">
+                                <small class="text-muted">Cost: 
+                                    <span style="float: right;">
+                                        {% for i in cocktail.avg_cost|times %}
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                        {% endfor %}
+                                        {% for i in cocktail.avg_cost|fivemtimes %}
+                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                        {% endfor %}
+                                    </span>
+                                </small>
+                            </li>
+                            <li class="list-group-item">
+                                <small class="text-muted">Preperation Hardness:
+                                    <span style="float: right;">
+                                        {% for i in cocktail.avg_prep|times %}
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                        {% endfor %}
+                                        {% for i in cocktail.avg_prep|fivemtimes %}
+                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                        {% endfor %}
+                                    </span>
+                                </small>
+                            </li>
+                        </ul>
+                        <div class="card-footer">
+                            <a href="{% url 'review' cocktail.id %}">Reviews</a>
+                            {% if user.is_authenticated %}
+
+                                {% if cocktail.user != user %}
+                                    | <a href="{% url 'rate' cocktail.id %}">Rate</a>
+                                {% else %}
+                                    | <a href="{% url 'edit-cocktail' cocktail.id %}">Edit</a>
+                                    | <a href="{% url 'delete-cocktail' cocktail.id %}">Delete</a>
+                                {% endif %}
+
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+        No Cocktails.. </h3>
+
+    {% endif %}
+
+    <script type="text/javascript">
+        $( '#search' ).keyup( function() {
+            var search = $('#search').val();
+            $('#cocktails').empty().load('{% url "home-search" %}?search=' + search);
+        });
+
+    </script>
+
+{% endblock %}

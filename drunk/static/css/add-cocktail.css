@@ -1,0 +1,21 @@
+.body {
+    max-width: 1000px;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #ff4e50;
+    border-color: #ff4e50;
+    width: 100%;
+    height: 50px;
+}
+
+.btn-primary:hover{
+    background-color: #BF3B3C;
+    border-color: #BF3B3C;
+}
+
+#id_picture {
+    border: none !important;
+    background-color: white;
+}

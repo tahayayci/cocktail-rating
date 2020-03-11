@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filters %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block content %}
+
+    {% if reviews %}
+
+        {% for review in reviews %}
+
+            <div class="card" style="width: 100%;">
+                <div class="card-header">
+                    {{ review.notes }}
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Taste: 
+                        {% for i in review.taste_star|times %}
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        {% endfor %}
+                        {% for i in review.taste_star|fivemtimes %}
+                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                        {% endfor %}
+                    </li>
+                    <li class="list-group-item">Cost: 
+                        {% for i in review.cost_star|times %}
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        {% endfor %}
+                        {% for i in review.cost_star|fivemtimes %}
+                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                        {% endfor %}
+                    </li>
+                    <li class="list-group-item">Preperation Hardness: 
+                    {% for i in review.prep_hardness_star|times %}
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                    {% endfor %}
+                    {% for i in review.prep_hardness_star|fivemtimes %}
+                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                    {% endfor %}
+                    </li>
+                </ul>
+                <div class="card-footer text-muted">
+                    <small class="text-muted">Reviewed by {{review.user}}</small>
+                </div>
+            </div><br>
+
+        {% endfor %}
+
+    {% else %}
+        
+        {% if user.is_authenticated %}
+
+            No reviews yet.. <a href="{% url 'rate' cocktail %}">Review</a> now!
+
+        {% else %}
+
+            No reviews yet.. <a href="{% url 'login' %}">Login</a> now and review!
+
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}

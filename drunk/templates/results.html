@@ -1,0 +1,76 @@
+{% load my_filters %}
+
+{% if cocktails|length %}
+    
+    {% for cocktail in cocktails %}
+
+        <div class="col-mb-4">
+            <div class="card" style="width:291px; margin-left:15px; margin-bottom: 25px;">
+                <img src="{{ cocktail.picture.url }}" class="card-img-top" style="width: 290px; height: 290px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{cocktail.name}} / <small>{{cocktail.group}}</small></h5>
+                    <p class="card-text">{{cocktail.recipe}}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <small class="text-muted">Is Alcoholic: 
+                            {% if cocktail.is_alcoholoic %}
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                            {% else %}
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            {% endif %}
+                        </small>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-muted">Taste: 
+                            <span style="float: right;">
+                                {% for i in cocktail.avg_taste|times %}
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                {% endfor %}
+                                {% for i in cocktail.avg_taste|fivemtimes %}
+                                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                                {% endfor %}
+                            </span>
+                        </small>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-muted">Cost: 
+                            <span style="float: right;">
+                                {% for i in cocktail.avg_cost|times %}
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                {% endfor %}
+                                {% for i in cocktail.avg_cost|fivemtimes %}
+                                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                                {% endfor %}
+                            </span>
+                        </small>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-muted">Preperation Hardness:
+                            <span style="float: right;">
+                                {% for i in cocktail.avg_prep|times %}
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                {% endfor %}
+                                {% for i in cocktail.avg_prep|fivemtimes %}
+                                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                                {% endfor %}
+                            </span>
+                        </small>
+                    </li>
+                </ul>
+                <div class="card-footer">
+                    <a href="{% url 'review' cocktail.id %}">Reviews</a>
+                    {% if user.is_authenticated %}
+                        | <a href="{% url 'rate' cocktail.id %}">Rate</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <h3>No cocktails.. </h3>
+
+{% endif %}

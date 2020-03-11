@@ -1,0 +1,21 @@
+.body {
+    max-width: 1000px;
+}
+
+.btn-primary {
+    background-color: #ff4e50 !important;
+    border-color: #ff4e50 !important;
+}
+
+.btn-primary:hover{
+    background-color: #BF3B3C !important;
+    border-color: #BF3B3C !important;
+}
+
+.asteriskField {
+    display: none !important;
+}
+
+a {
+    color: #ff4e50;
+}

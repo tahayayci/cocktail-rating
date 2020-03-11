@@ -1,0 +1,21 @@
+h2{
+    text-align: center;
+    color: #ff4e50;
+}
+
+button {
+    width: 100%;
+    height: 50px;
+    color: white;
+}
+
+.btn-success {
+    color: #fff;
+    background-color: #ff4e50;
+    border-color: #ff4e50;
+}
+
+.btn-success:hover{
+    background-color: #BF3B3C;
+    border-color: #BF3B3C;
+}

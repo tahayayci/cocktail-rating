@@ -1,0 +1,1 @@
+web: gunicorn cocktail_rating.wsgi

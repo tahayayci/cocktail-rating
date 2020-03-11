@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n widget_tweaks %}
+
+
+{% block head %} 
+    <link rel="stylesheet" href="{% static 'css/add-cocktail.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block content %}
+
+<form class="form-horizontal" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group row">
+            <label for="id_{{field.label}}" class="col-sm-2 col-form-label">{{field.label}}</label>
+            <div class="col-sm-10">
+                {{field|attr:"class:form-control"}}
+            </div>
+        </div>
+    {% endfor %}
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Edit Cocktail</button>
+    </div>
+</form>
+{% endblock %}
