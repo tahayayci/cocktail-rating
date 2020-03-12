@@ -8,7 +8,6 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from bootstrap_modal_forms.generic import BSModalCreateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import render
