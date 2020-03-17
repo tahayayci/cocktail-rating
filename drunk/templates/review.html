@@ -12,7 +12,16 @@
 
         {% for review in reviews %}
 
-            <div class="card" style="width: 100%;">
+            {% if review.user.is_expert %}
+
+                <div class="card" style="width: 100%; box-shadow: 0 4px 8px 0 #ff4e50;border-color: #ff4e50;">
+
+            {% else %}
+
+                <div class="card" style="width: 100%;">
+
+            {% endif %}
+
                 <div class="card-header">
                     {{ review.notes }}
                 </div>

@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .models import CocktailReview, Cocktail, CocktailGroup
+
+User = get_user_model()
 
 
 class RegisterForm(UserCreationForm):
@@ -11,7 +13,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2',)
 
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
@@ -23,7 +25,6 @@ class RegisterForm(UserCreationForm):
 
 
 class RatingForm(forms.ModelForm):
-
     class Meta:
         model = CocktailReview
         fields = ('taste_star', 'cost_star', 'prep_hardness_star', 'notes')
@@ -32,15 +33,13 @@ class RatingForm(forms.ModelForm):
         super(RatingForm, self).__init__(*args, **kwargs)
         self.fields['taste_star'].label = "Taste"
         self.fields['cost_star'].label = "Cost"
-        self.fields['prep_hardness_star'].label = "Preperation Hardness"
+        self.fields['prep_hardness_star'].label = "Preparation Hardness"
 
 
 class CocktailForm(forms.ModelForm):
-
     class Meta:
         model = Cocktail
-        fields = ('name', 'recipe', 'picture', 'group', 'is_alcoholoic')
+        fields = ('name', 'recipe', 'picture', 'group', 'is_alcoholic')
         widgets = {
-          'recipe': forms.Textarea(attrs={'rows':5}),
+            'recipe': forms.Textarea(attrs={'rows': 5}),
         }
-

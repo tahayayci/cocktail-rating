@@ -1,5 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    is_expert = models.BooleanField()
 
 
 class CocktailGroup(models.Model):
@@ -7,21 +11,19 @@ class CocktailGroup(models.Model):
 
     def __str__(self):
         return self.name
-    
 
 
 class Cocktail(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     group = models.ForeignKey(CocktailGroup, on_delete=models.PROTECT)
     name = models.CharField(max_length=256)
-    is_alcoholoic = models.BooleanField()
+    is_alcoholic = models.BooleanField()
     recipe = models.TextField(max_length=256)
     picture = models.ImageField(upload_to='cocktail_images/')
     is_active = models.BooleanField()
 
     def __str__(self):
         return self.name
-    
 
 
 class CocktailReview(models.Model):
