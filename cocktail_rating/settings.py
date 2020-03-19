@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'drunk',
     'crispy_forms',
     'widget_tweaks',
+    'storages',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
