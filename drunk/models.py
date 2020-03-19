@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    is_expert = models.BooleanField()
+    is_expert = models.BooleanField(default=False)
 
 
 class CocktailGroup(models.Model):
