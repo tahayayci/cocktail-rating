@@ -50,7 +50,7 @@ class HomeView(View):
 
     def get(self, request):
         cocktails = Cocktail.objects.filter(
-            is_active=1, cocktailreview__user__is_active=1
+            is_active=1
         ).annotate(
             avg_taste=Round(Avg('cocktailreview__taste_star')),
             avg_cost=Round(Avg('cocktailreview__cost_star')),
@@ -117,9 +117,7 @@ class RateView(LoginRequiredMixin, View):
         if obj.user == request.user and obj.is_active == 0:
             return redirect('home')
 
-        cocktail = Cocktail.objects.filter(
-            cocktailreview__user__is_active=1
-        ).annotate(
+        cocktail = Cocktail.objects.annotate(
             avg_taste=Round(Avg('cocktailreview__taste_star')),
             avg_cost=Round(Avg('cocktailreview__cost_star')),
             avg_prep=Round(Avg('cocktailreview__prep_hardness_star'))
@@ -172,7 +170,7 @@ def review(request, cocktail):
     if request.user == Cocktail.objects.get(id=cocktail).is_active == 0:
         return redirect('home')
 
-    reviews = CocktailReview.objects.filter(cocktail_id=cocktail, user__is_active=1).order_by('-user__is_expert')
+    reviews = CocktailReview.objects.filter(cocktail_id=cocktail).order_by('-user__is_expert')
 
     return render(request, 'review.html', {'reviews': reviews, 'cocktail': cocktail})
 
