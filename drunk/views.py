@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import redirect
 from django.contrib.auth import logout
-from django.db.models.functions import Round
-from django.db.models import Avg, Count
+from django.db.models.functions import Round, Coalesce, Cast
+from django.db.models import Avg, Count, OuterRef, Sum, Subquery, F, FloatField, When, Case, IntegerField
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
@@ -45,39 +45,47 @@ def logout_view(request):
     return redirect('home')
 
 
+def cocktail_query():
+    # Subquery preparations
+    normal_reviews = CocktailReview.objects.filter(
+        cocktail=OuterRef("pk"),
+        user__is_expert=False
+    )
+    expert_reviews = CocktailReview.objects.filter(
+        cocktail=OuterRef("pk"),
+        user__is_expert=True
+    )
+
+    query = Cocktail.objects.filter(
+        is_active=1
+    ).annotate(
+        total_taste=Coalesce(Sum(Subquery(normal_reviews.values('taste_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('taste_star'))), 0),
+        total_cost=Coalesce(Sum(Subquery(normal_reviews.values('cost_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('cost_star'))), 0),
+        total_prep=Coalesce(Sum(Subquery(normal_reviews.values('prep_hardness_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('prep_hardness_star'))), 0),
+        user_count=Count(Subquery(normal_reviews.values('id'))) + 2 * Count(Subquery(expert_reviews.values('id'))),
+    ).annotate(
+        avg_taste=Case(
+            When(user_count=0, then=0),
+            default=Cast(Round(Cast(F('total_taste'), FloatField()) / Cast(F('user_count'), FloatField())), IntegerField())
+        ),
+        avg_cost=Case(
+            When(user_count=0, then=0),
+            default=Cast(Round(Cast(F('total_cost'), FloatField()) / Cast(F('user_count'), FloatField())), IntegerField())
+        ),
+        avg_prep=Case(
+            When(user_count=0, then=0),
+            default=Cast(Round(Cast(F('total_prep'), FloatField()) / Cast(F('user_count'), FloatField())), IntegerField())
+        ),
+    )
+
+    return query
+
+
 class HomeView(View):
     template_name = 'home.html'
 
     def get(self, request):
-        cocktails = Cocktail.objects.filter(
-            is_active=1
-        ).annotate(
-            avg_taste=Round(Avg('cocktailreview__taste_star')),
-            avg_cost=Round(Avg('cocktailreview__cost_star')),
-            avg_prep=Round(Avg('cocktailreview__prep_hardness_star'))
-        ).order_by('name')
-
-        # avg_expert = Cocktail.objects.filter(
-        #     is_active=1, cocktailreview__user__is_expert=1, cocktailreview__user__is_active=1
-        # ).annotate(
-        #     avg_taste=Avg('cocktailreview__taste_star'),
-        #     count_taste=Count('cocktailreview__taste_star'),
-        #     avg_cost=Avg('cocktailreview__cost_star'),
-        #     count_cost=Count('cocktailreview__cost_star'),
-        #     avg_prep=Avg('cocktailreview__prep_hardness_star'),
-        #     count_prep=Avg('cocktailreview__prep_hardness_star')
-        # )
-        #
-        # avg_norm = Cocktail.objects.filter(
-        #     is_active=1, cocktailreview__user__is_expert=0, cocktailreview__user__is_active=1
-        # ).annotate(
-        #     avg_taste=Avg('cocktailreview__taste_star'),
-        #     count_taste=Count('cocktailreview__taste_star'),
-        #     avg_cost=Avg('cocktailreview__cost_star'),
-        #     count_cost=Count('cocktailreview__cost_star'),
-        #     avg_prep=Avg('cocktailreview__prep_hardness_star'),
-        #     count_prep=Avg('cocktailreview__prep_hardness_star')
-        # )
+        cocktails = cocktail_query()
 
         return render(request, self.template_name, {'cocktails': cocktails})
 
@@ -87,21 +95,11 @@ def search(request):
 
     if search_word is not None and search_word != '' and len(search_word) >= 3:
 
-        cocktails = Cocktail.objects.filter(
-            name__icontains=search, is_active=1
-        ).annotate(
-            avg_taste=Round(Avg('cocktailreview__taste_star')),
-            avg_cost=Round(Avg('cocktailreview__cost_star')),
-            avg_prep=Round(Avg('cocktailreview__prep_hardness_star'))
-        ).order_by('name')
+        cocktails = cocktail_query().filter(name__icontains=search_word)
 
     else:
 
-        cocktails = Cocktail.objects.annotate(
-            avg_taste=Round(Avg('cocktailreview__taste_star')),
-            avg_cost=Round(Avg('cocktailreview__cost_star')),
-            avg_prep=Round(Avg('cocktailreview__prep_hardness_star'))
-        ).filter(is_active=1).order_by('name')
+        cocktails = cocktail_query()
 
     return render(request, 'results.html', {'cocktails': cocktails})
 
@@ -117,11 +115,7 @@ class RateView(LoginRequiredMixin, View):
         if obj.user == request.user and obj.is_active == 0:
             return redirect('home')
 
-        cocktail = Cocktail.objects.annotate(
-            avg_taste=Round(Avg('cocktailreview__taste_star')),
-            avg_cost=Round(Avg('cocktailreview__cost_star')),
-            avg_prep=Round(Avg('cocktailreview__prep_hardness_star'))
-        ).get(id=cocktail)
+        cocktail = cocktail_query()
 
         form = self.form_class()
 
