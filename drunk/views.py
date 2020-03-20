@@ -115,7 +115,7 @@ class RateView(LoginRequiredMixin, View):
         if obj.user == request.user and obj.is_active == 0:
             return redirect('home')
 
-        cocktail = cocktail_query()
+        cocktail = cocktail_query().get(id=cocktail)
 
         form = self.form_class()
 
