@@ -62,7 +62,7 @@ def cocktail_query():
         total_taste=Coalesce(Sum(Subquery(normal_reviews.values('taste_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('taste_star'))), 0),
         total_cost=Coalesce(Sum(Subquery(normal_reviews.values('cost_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('cost_star'))), 0),
         total_prep=Coalesce(Sum(Subquery(normal_reviews.values('prep_hardness_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('prep_hardness_star'))), 0),
-        user_count=Count(Subquery(normal_reviews.values('id'))) + 2 * Count(Subquery(expert_reviews.values('id'))),
+        user_count=Subquery(normal_reviews.count()) + 2 * Subquery(expert_reviews.count()),
     ).annotate(
         avg_taste=Case(
             When(user_count=0, then=0),
