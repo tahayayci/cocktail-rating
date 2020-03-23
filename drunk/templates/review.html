@@ -65,7 +65,7 @@
             No reviews yet..
 
             {% if user.id != cocktail.user.id %}
-                <a href="{% url 'rate' cocktail %}">Review</a> now!
+                <a href="{% url 'rate' cocktail.id %}">Review</a> now!
             {% endif %}
         {% else %}
 
