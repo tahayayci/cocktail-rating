@@ -62,8 +62,11 @@
         
         {% if user.is_authenticated %}
 
-            No reviews yet.. <a href="{% url 'rate' cocktail %}">Review</a> now!
+            No reviews yet..
 
+            {% if user.id != cocktail.user.id %}
+                <a href="{% url 'rate' cocktail %}">Review</a> now!
+            {% endif %}
         {% else %}
 
             No reviews yet.. <a href="{% url 'login' %}">Login</a> now and review!

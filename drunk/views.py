@@ -112,7 +112,7 @@ class RateView(LoginRequiredMixin, View):
 
         obj = Cocktail.objects.get(id=cocktail)
 
-        if obj.user == request.user and obj.is_active == 0:
+        if obj.user == request.user or obj.is_active == 0:
             return redirect('home')
 
         cocktail = cocktail_query().get(id=cocktail)
@@ -165,6 +165,7 @@ def review(request, cocktail):
         return redirect('home')
 
     reviews = CocktailReview.objects.filter(cocktail_id=cocktail).order_by('-user__is_expert')
+    cocktail = Cocktail.objects.get(id=cocktail)
 
     return render(request, 'review.html', {'reviews': reviews, 'cocktail': cocktail})
 
