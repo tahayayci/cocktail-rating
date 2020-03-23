@@ -59,10 +59,10 @@ def cocktail_query():
     query = Cocktail.objects.filter(
         is_active=1
     ).annotate(
-        total_taste=Coalesce(Sum(Subquery(normal_reviews.values('taste_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('taste_star'))), 0),
-        total_cost=Coalesce(Sum(Subquery(normal_reviews.values('cost_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('cost_star'))), 0),
-        total_prep=Coalesce(Sum(Subquery(normal_reviews.values('prep_hardness_star'))), 0) + 2 * Coalesce(Sum(Subquery(expert_reviews.values('prep_hardness_star'))), 0),
-        user_count=Subquery(normal_reviews.aggregate(Count('user__id'))) + 2 * Subquery(expert_reviews.aggregate(Count('user__id'))),
+        total_taste=Coalesce(Subquery(normal_reviews.values('cocktail_id').annotate(tmp=Sum('taste_star')).values('tmp')), 0) + 2*Coalesce(Subquery(expert_reviews.values('cocktail_id').annotate(tmp=Sum('taste_star')).values('tmp')), 0),
+        total_cost=Coalesce(Subquery(normal_reviews.values('cocktail_id').annotate(tmp=Sum('cost_star')).values('tmp')), 0) + 2*Coalesce(Subquery(expert_reviews.values('cocktail_id').annotate(tmp=Sum('cost_star')).values('tmp')), 0),
+        total_prep=Coalesce(Subquery(normal_reviews.values('cocktail_id').annotate(tmp=Sum('prep_hardness_star')).values('tmp')), 0) + 2*Coalesce(Subquery(expert_reviews.values('cocktail_id').annotate(tmp=Sum('prep_hardness_star')).values('tmp')), 0),
+        user_count=Coalesce(Subquery(normal_reviews.values('cocktail_id').annotate(tmp=Count('id')).values('tmp')), 0) + 2*Coalesce(Subquery(expert_reviews.values('cocktail_id').annotate(tmp=Count('id')).values('tmp')), 0)
     ).annotate(
         avg_taste=Case(
             When(user_count=0, then=0),
