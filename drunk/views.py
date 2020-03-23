@@ -45,7 +45,7 @@ def logout_view(request):
     return redirect('home')
 
 
-def cocktail_query():
+def cocktail_query(extra_filters={}):
     # Subquery preparations
     normal_reviews = CocktailReview.objects.filter(
         cocktail=OuterRef("pk"),
@@ -57,7 +57,8 @@ def cocktail_query():
     )
 
     query = Cocktail.objects.filter(
-        is_active=1
+        is_active=1,
+        **extra_filters
     ).annotate(
         total_taste=Coalesce(Subquery(normal_reviews.values('cocktail_id').annotate(tmp=Sum('taste_star')).values('tmp')), 0) + 2*Coalesce(Subquery(expert_reviews.values('cocktail_id').annotate(tmp=Sum('taste_star')).values('tmp')), 0),
         total_cost=Coalesce(Subquery(normal_reviews.values('cocktail_id').annotate(tmp=Sum('cost_star')).values('tmp')), 0) + 2*Coalesce(Subquery(expert_reviews.values('cocktail_id').annotate(tmp=Sum('cost_star')).values('tmp')), 0),
@@ -94,11 +95,8 @@ def search(request):
     search_word = request.GET.get('search')
 
     if search_word is not None and search_word != '' and len(search_word) >= 3:
-
-        cocktails = cocktail_query().filter(name__icontains=search_word)
-
+        cocktails = cocktail_query(extra_filters={'name__icontains': search_word})
     else:
-
         cocktails = cocktail_query()
 
     return render(request, 'results.html', {'cocktails': cocktails})
