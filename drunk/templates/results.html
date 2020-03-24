@@ -69,7 +69,8 @@
 
     {% endfor %}
 
-    <ul class="pagination" style="margin-left: 15px;">
+    {% if search == False %}
+        <ul class="pagination" style="margin-left: 15px;">
 
                 {% if page_obj.has_previous %}
                     <li class="page-item">
@@ -122,6 +123,7 @@
 {#                {% endif %}#}
 
             </ul>
+        {% endif %}
 
 {% else %}
 

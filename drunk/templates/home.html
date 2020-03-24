@@ -187,11 +187,21 @@
     {% endif %}
 
     <script type="text/javascript">
-        $( '#search' ).keyup( function() {
-            var search = $('#search').val();
-            $('#cocktails').empty().load('{% url "home-search" %}?search=' + search);
+        var timeout;
+        $( '#search' ).keyup(function() {
+            if(timeout) {
+                clearTimeout(timeout);
+            }
+
+            timeout = setTimeout(function(event){ do_search(); }, 600); // After the timeout, search it
         });
 
+        function do_search() {
+            let search = $('#search').val();
+            if (search.length >= 3 || search.length == 0) {
+                $('#cocktails').empty().load('{% url "home-search" %}?search=' + search);
+            }
+        }
     </script>
 
 {% endblock %}

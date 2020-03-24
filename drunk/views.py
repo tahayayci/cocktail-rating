@@ -88,7 +88,7 @@ class HomeView(View):
 
     def get(self, request):
         cocktails = cocktail_query()
-        paginator = Paginator(cocktails, 15)
+        paginator = Paginator(cocktails, 12)
 
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -101,16 +101,13 @@ def search(request):
 
     if search_word is not None and search_word != '' and len(search_word) >= 3:
         cocktails = cocktail_query(extra_filters={'name__icontains': search_word})
-        paginator = Paginator(cocktails, 5)
+        return render(request, 'results.html', {'page_obj': cocktails, 'search': True})
 
     else:
         cocktails = cocktail_query()
-        paginator = Paginator(cocktails, 5)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'results.html', {'page_obj': page_obj})
+        paginator = Paginator(cocktails, 12)
+        page_number = request.GET.get('page')
+        return render(request, 'results.html', {'page_obj': paginator.get_page(page_number), 'search': False})
 
 
 class RateView(LoginRequiredMixin, View):
