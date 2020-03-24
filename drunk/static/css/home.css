@@ -19,3 +19,17 @@
 a {
     color: #ff4e50;
 }
+
+.page-item.active .page-link {
+    color: #fff;
+    background-color: rgb(193, 83, 233);
+    border-color: rgb(193, 83, 233);
+}
+
+.page-link:hover {
+    color: #ff4e50;
+}
+
+a.page-link {
+    color: rgb(193, 83, 233);
+}

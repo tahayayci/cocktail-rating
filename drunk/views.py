@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth import login, authenticate
+from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.db.models.functions import Round, Coalesce, Cast
@@ -77,7 +78,7 @@ def cocktail_query(extra_filters={}):
             When(user_count=0, then=0),
             default=Cast(Round(Cast(F('total_prep'), FloatField()) / Cast(F('user_count'), FloatField())), IntegerField())
         ),
-    )[:50]
+    )
 
     return query
 
@@ -87,8 +88,12 @@ class HomeView(View):
 
     def get(self, request):
         cocktails = cocktail_query()
+        paginator = Paginator(cocktails, 15)
 
-        return render(request, self.template_name, {'cocktails': cocktails})
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, self.template_name, {'page_obj': page_obj})
 
 
 def search(request):
@@ -96,10 +101,16 @@ def search(request):
 
     if search_word is not None and search_word != '' and len(search_word) >= 3:
         cocktails = cocktail_query(extra_filters={'name__icontains': search_word})
+        paginator = Paginator(cocktails, 5)
+
     else:
         cocktails = cocktail_query()
+        paginator = Paginator(cocktails, 5)
 
-    return render(request, 'results.html', {'cocktails': cocktails})
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'results.html', {'page_obj': page_obj})
 
 
 class RateView(LoginRequiredMixin, View):
