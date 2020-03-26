@@ -93,7 +93,7 @@ class HomeView(View):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        return render(request, self.template_name, {'page_obj': page_obj})
+        return render(request, self.template_name, {'page_obj': page_obj, 'search': False})
 
 
 def search(request):
