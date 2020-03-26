@@ -1,157 +1,133 @@
 {% load my_filters %}
 
 {% if page_obj|length %}
-    
-    {% for cocktail in page_obj %}
+    <div class="row row-cols-1 row-cols-md-3" id="cocktails">
+        {% for cocktail in page_obj %}
+            <div class="col-mb-4">
+                <div class="card" style="width:291px; margin-left:15px; margin-bottom: 25px;">
+                    <img src="{{ cocktail.picture.url }}" class="card-img-top" style="width: 290px; height: 290px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{cocktail.name}} / <small>{{cocktail.group}}</small></h5>
+                        <p class="card-text">{{cocktail.recipe}}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <small class="text-muted">Is Alcoholic:
+                                {% if cocktail.is_alcoholic %}
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                {% else %}
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                {% endif %}
+                            </small>
+                        </li>
+                        <li class="list-group-item">
+                            <small class="text-muted">Taste:
+                                <span style="float: right;">
+                                    {% for i in cocktail.avg_taste|times %}
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    {% endfor %}
+                                    {% for i in cocktail.avg_taste|fivemtimes %}
+                                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                                    {% endfor %}
+                                </span>
+                            </small>
+                        </li>
+                        <li class="list-group-item">
+                            <small class="text-muted">Cost:
+                                <span style="float: right;">
+                                    {% for i in cocktail.avg_cost|times %}
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    {% endfor %}
+                                    {% for i in cocktail.avg_cost|fivemtimes %}
+                                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                                    {% endfor %}
+                                </span>
+                            </small>
+                        </li>
+                        <li class="list-group-item">
+                            <small class="text-muted">Preperation Hardness:
+                                <span style="float: right;">
+                                    {% for i in cocktail.avg_prep|times %}
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    {% endfor %}
+                                    {% for i in cocktail.avg_prep|fivemtimes %}
+                                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                                    {% endfor %}
+                                </span>
+                            </small>
+                        </li>
+                    </ul>
+                    <div class="card-footer">
+                        <a href="{% url 'review' cocktail.id %}">Reviews</a>
+                        {% if user.is_authenticated %}
 
-        <div class="col-mb-4">
-            <div class="card" style="width:291px; margin-left:15px; margin-bottom: 25px;">
-                <img src="{{ cocktail.picture.url }}" class="card-img-top" style="width: 290px; height: 290px;">
-                <div class="card-body">
-                    <h5 class="card-title">{{cocktail.name}} / <small>{{cocktail.group}}</small></h5>
-                    <p class="card-text">{{cocktail.recipe}}</p>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <small class="text-muted">Is Alcoholic: 
-                            {% if cocktail.is_alcoholic %}
-                                <i class="fa fa-check" aria-hidden="true"></i>
+                            {% if cocktail.user != user %}
+                                | <a href="{% url 'rate' cocktail.id %}">Rate</a>
                             {% else %}
-                                <i class="fa fa-times" aria-hidden="true"></i>
+                                | <a href="{% url 'edit-cocktail' cocktail.id %}">Edit</a>
+                                | <a href="#" data-toggle="modal" data-target="#modalDelete">Delete</a>
                             {% endif %}
-                        </small>
-                    </li>
-                    <li class="list-group-item">
-                        <small class="text-muted">Taste: 
-                            <span style="float: right;">
-                                {% for i in cocktail.avg_taste|times %}
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                {% endfor %}
-                                {% for i in cocktail.avg_taste|fivemtimes %}
-                                    <i class="fa fa-star-o" aria-hidden="true"></i>
-                                {% endfor %}
-                            </span>
-                        </small>
-                    </li>
-                    <li class="list-group-item">
-                        <small class="text-muted">Cost: 
-                            <span style="float: right;">
-                                {% for i in cocktail.avg_cost|times %}
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                {% endfor %}
-                                {% for i in cocktail.avg_cost|fivemtimes %}
-                                    <i class="fa fa-star-o" aria-hidden="true"></i>
-                                {% endfor %}
-                            </span>
-                        </small>
-                    </li>
-                    <li class="list-group-item">
-                        <small class="text-muted">Preperation Hardness:
-                            <span style="float: right;">
-                                {% for i in cocktail.avg_prep|times %}
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                {% endfor %}
-                                {% for i in cocktail.avg_prep|fivemtimes %}
-                                    <i class="fa fa-star-o" aria-hidden="true"></i>
-                                {% endfor %}
-                            </span>
-                        </small>
-                    </li>
-                </ul>
-                <div class="card-footer">
-                    <a href="{% url 'review' cocktail.id %}">Reviews</a>
-                    {% if user.is_authenticated %}
 
-                        {% if cocktail.user != user %}
-                            | <a href="{% url 'rate' cocktail.id %}">Rate</a>
-                        {% else %}
-                            | <a href="{% url 'edit-cocktail' cocktail.id %}">Edit</a>
-                            | <a href="#" data-toggle="modal" data-target="#modalDelete">Delete</a>
-                        {% endif %}
-
-                        <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDelete" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalDeleteTitle">Delete {{cocktail.name}}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure?
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="{% url 'delete-cocktail' cocktail.id %}">
-                                    <button type="button" class="btn btn-primary">Delete</button>
-                                    </a>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
+                            <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDelete" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalDeleteTitle">Delete {{cocktail.name}}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="{% url 'delete-cocktail' cocktail.id %}">
+                                        <button type="button" class="btn btn-primary">Delete</button>
+                                        </a>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
-
-    {% endfor %}
+        {% endfor %}
+    </div>
 
     {% if search == False %}
-        <ul class="pagination" style="margin-left: 15px;">
-
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                    </li>
+        <ul class="pagination justify-content-center" style="padding-top: 30px;">
+            {% if page_obj.paginator.num_pages != 1 %}
+                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">First</a></li>
+            {% endif %}
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+            {% endif %}
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ i }} <span class="sr-only">(current)</span></a></li>
+                {% elif page_obj.number > i|add:"-7" and page_obj.number < i|add:"+7"%}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                 {% endif %}
-
-                {% if page_obj.number|add:'-4' > 1 %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
-                {% endif %}
-
-                {% for i in page_obj.paginator.page_range %}
-                    {% if page_obj.number == i %}
-                        <li class="page-item active">
-                          <a class="page-link" href="?page={{ page_obj.number }}">{{ i }} <span class="sr-only">(current)</span></a>
-                        </li>
-                    {% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                    {% endif %}
-                {% endfor %}
-{##}
-{#                {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}#}
-{#                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'5' }}">&hellip;</a></li>#}
-{#                {% endif %}#}
-{##}
-{#                {% if page_obj.has_next %}#}
-{#                    <li class="page-item">#}
-{#                      <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">#}
-{#                        <span aria-hidden="true">&raquo;</span>#}
-{#                        <span class="sr-only">Next</span>#}
-{#                      </a>#}
-{#                    </li>#}
-{#                {% else %}#}
-{#                    <li class="page-item disabled">#}
-{#                      <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">#}
-{#                        <span aria-hidden="true">&raquo;</span>#}
-{#                        <span class="sr-only">Next</span>#}
-{#                      </a>#}
-{#                    </li>#}
-{#                {% endif %}#}
-
-            </ul>
-        {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+            {% endif %}
+            {% if page_obj.paginator.num_pages != page_obj.number %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Last</a></li>
+            {% endif %}
+        </ul>
+        <center><p>Total {{ page_obj.paginator.num_pages }} pages.</p></center>
+    {% endif %}
 
 {% else %}
 
