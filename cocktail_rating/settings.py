@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'drunk',
+    'drunk.apps.DrunkConfig',
     'crispy_forms',
     'widget_tweaks',
     'storages',
