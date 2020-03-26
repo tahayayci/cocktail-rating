@@ -78,7 +78,7 @@ def cocktail_query(extra_filters={}):
             When(user_count=0, then=0),
             default=Cast(Round(Cast(F('total_prep'), FloatField()) / Cast(F('user_count'), FloatField())), IntegerField())
         ),
-    )
+    ).order_by('name')
 
     return query
 
