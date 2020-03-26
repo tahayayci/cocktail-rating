@@ -74,24 +74,24 @@
                 <td>
                     <div class='rating-stars text-center' id='taste'>
                         <ul id='stars_taste'>
-                        <li class='star' title='Poor' data-value='1'>
+                        <li class="star {% if form.taste_star.value >= 1 %}selected{% endif %}" title='Poor' data-value='1'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Fair' data-value='2'>
+                        <li class='star {% if form.taste_star.value >= 2 %}selected{% endif %}' title='Fair' data-value='2'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Good' data-value='3'>
+                        <li class='star {% if form.taste_star.value >= 3 %}selected{% endif %}' title='Good' data-value='3'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Excellent' data-value='4'>
+                        <li class='star {% if form.taste_star.value >= 4 %}selected{% endif %}' title='Excellent' data-value='4'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='WOW!!!' data-value='5'>
+                        <li class='star {% if form.taste_star.value >= 5 %}selected{% endif %}' title='WOW!!!' data-value='5'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
                         </ul>
                     </div>
-                    <input id="taste_star" name="taste_star" type="number" style="display: none;" >
+                    <input id="taste_star" name="taste_star" type="number" style="display: none;" value="{{ form.taste_star.value|default_if_none:'' }}">
                 </td>
             </tr>
             <tr>
@@ -99,24 +99,24 @@
                 <td>
                     <div class='rating-stars text-center' id='cost'>
                         <ul id='stars_cost'>
-                        <li class='star' title='Poor' data-value='1'>
+                        <li class='star {% if form.cost_star.value >= 1 %}selected{% endif %}' title='Poor' data-value='1'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Fair' data-value='2'>
+                        <li class='star {% if form.cost_star.value >= 2 %}selected{% endif %}' title='Fair' data-value='2'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Good' data-value='3'>
+                        <li class='star {% if form.cost_star.value >= 3 %}selected{% endif %}' title='Good' data-value='3'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Excellent' data-value='4'>
+                        <li class='star {% if form.cost_star.value >= 4 %}selected{% endif %}' title='Excellent' data-value='4'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='WOW!!!' data-value='5'>
+                        <li class='star {% if form.cost_star.value >= 5 %}selected{% endif %}' title='WOW!!!' data-value='5'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
                         </ul>
                     </div>
-                    <input id="cost_star" name="cost_star" type="number" style="display: none;" >
+                    <input id="cost_star" name="cost_star" type="number" style="display: none;" value="{{ form.cost_star.value|default_if_none:'' }}">
                 </td>
             </tr>
             <tr>
@@ -124,29 +124,29 @@
                 <td>
                     <div class='rating-stars text-center' id='prep'>
                         <ul id='stars_prep'>
-                        <li class='star' title='Poor' data-value='1'>
+                        <li class='star {% if form.prep_hardness_star.value >= 1 %}selected{% endif %}' title='Poor' data-value='1'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Fair' data-value='2'>
+                        <li class='star {% if form.prep_hardness_star.value >= 2 %}selected{% endif %}' title='Fair' data-value='2'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Good' data-value='3'>
+                        <li class='star {% if form.prep_hardness_star.value >= 3 %}selected{% endif %}' title='Good' data-value='3'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='Excellent' data-value='4'>
+                        <li class='star {% if form.prep_hardness_star.value >= 4 %}selected{% endif %}' title='Excellent' data-value='4'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
-                        <li class='star' title='WOW!!!' data-value='5'>
+                        <li class='star {% if form.prep_hardness_star.value >= 5 %}selected{% endif %}' title='WOW!!!' data-value='5'>
                             <i class='fa fa-star fa-fw'></i>
                         </li>
                         </ul>
                     </div>
-                    <input id="prep_hardness_star" name="prep_hardness_star" type="number" style="display: none;" >
+                    <input id="prep_hardness_star" name="prep_hardness_star" type="number" style="display: none;" value="{{ form.prep_hardness_star.value|default_if_none:'' }}">
                 </td>
             </tr>
             <tr>
                 <td><label for="notes">Notes *</label></td>
-                <td><textarea class="form-control" id="notes" name="notes" rows="3" required></textarea></td>
+                <td><textarea class="form-control" id="notes" name="notes" rows="3" required>{{ form.notes.value|default_if_none:"" }}</textarea></td>
             </tr>
         </table>
         <br>
@@ -160,18 +160,18 @@
         });
 
         function clickButton() {
-            if ($('#prep_hardness_star').val() == '') {
-                alert("Preperation Hardness Star cannot be left blank.");
-                event.preventDefault();
-            }
-
-            else if ($('#taste_star').val() == '') {
+            if ($('#taste_star').val() == '') {
                 alert("Taste Star cannot be left blank.");
                 event.preventDefault();
             }
 
             else if ($('#cost_star').val() == '') {
                 alert("Cost Star cannot be left blank.");
+                event.preventDefault();
+            }
+
+            else if ($('#prep_hardness_star').val() == '') {
+                alert("Preperation Hardness Star cannot be left blank.");
                 event.preventDefault();
             }
         }
