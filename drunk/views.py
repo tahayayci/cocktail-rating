@@ -115,20 +115,28 @@ class RateView(LoginRequiredMixin, View):
     template_name = 'rate.html'
 
     def get(self, request, cocktail):
-
-        obj = Cocktail.objects.get(id=cocktail)
-
-        if obj.user == request.user or obj.is_active == 0:
-            return redirect('home')
-
         cocktail = cocktail_query().get(id=cocktail)
 
-        form = self.form_class()
+        if cocktail.user == request.user or cocktail.is_active == 0:
+            return redirect('home')
+
+        # Check whether there is a review exist
+        rating = CocktailReview.objects.filter(user=request.user, cocktail=cocktail).first()
+        if rating is not None:
+            form = self.form_class(initial={
+                'notes': rating.notes,
+                'cost_star': rating.cost_star,
+                'taste_star': rating.taste_star,
+                'prep_hardness_star': rating.prep_hardness_star,
+            })
+        else:
+            form = self.form_class()
 
         return render(request, self.template_name, {'cocktail': cocktail, 'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        rating = CocktailReview.objects.filter(user=request.user, cocktail_id=self.kwargs['cocktail']).first()
+        form = self.form_class(instance=rating, data=request.POST)
 
         if form.is_valid():
             rate = form.save(commit=False)
