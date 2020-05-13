@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+<a href="{{ request.META.HTTP_REFERER }}" class="btn btn-default" style="border: 1px solid black; margin-bottom: 15px;">← Back</a>
 
 <form class="form-horizontal" method="post" enctype="multipart/form-data">
     {% csrf_token %}
